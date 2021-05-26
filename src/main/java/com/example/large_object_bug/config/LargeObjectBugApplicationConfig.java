@@ -3,6 +3,7 @@ package com.example.large_object_bug.config;
 import org.springframework.content.fs.config.EnableFilesystemStores;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.FileSystemResourceLoader;
 
 import java.io.File;
@@ -22,8 +23,8 @@ public class LargeObjectBugApplicationConfig {
     }
 
     @Bean
-    FileSystemResourceLoader fileSystemResourceLoader() {
-        return new FileSystemResourceLoader();
+    FileSystemResource fileSystemResourceLoader() {
+        return new FileSystemResource(filesystemRoot().getAbsolutePath());
     }
 
 }

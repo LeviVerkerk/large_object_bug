@@ -1,7 +1,7 @@
 package com.example.large_object_bug.controller;
 
 import com.example.large_object_bug.model.File;
-import com.example.large_object_bug.repository.FileFSRepository;
+import com.example.large_object_bug.repository.FileRepository;
 import com.example.large_object_bug.stores.FileContentStore;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,7 +19,7 @@ import java.util.Optional;
 @Slf4j
 public class FileContentController {
 
-	@Autowired private FileFSRepository filesRepo;
+	@Autowired private FileRepository filesRepo;
 	@Autowired private FileContentStore contentStore;
 	
 	@RequestMapping(value="/files/{fileId}", method = RequestMethod.PUT)

@@ -1,9 +1,6 @@
 package com.example.large_object_bug;
 
-import lombok.Data;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import org.springframework.content.commons.annotations.ContentId;
 import org.springframework.content.commons.annotations.ContentLength;
 
@@ -16,6 +13,7 @@ import java.util.Date;
 @Entity
 @Data
 @NoArgsConstructor
+
 public class File {
 
 	@Id
@@ -28,4 +26,10 @@ public class File {
 	@ContentId private String contentId;
 	@ContentLength private long contentLength;
 	private String mimeType = "text/plain";
+
+	public File(String name, Date created, String summary) {
+		this.name = name;
+		this.created = created;
+		this.summary = summary;
+	}
 }

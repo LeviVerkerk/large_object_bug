@@ -1,5 +1,6 @@
 package com.example.large_object_bug;
 
+import com.example.large_object_bug.repository.FileFSRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.InputStreamResource;
@@ -16,11 +17,11 @@ import java.util.Optional;
 @Slf4j
 public class FileContentController {
 
-	@Autowired private FileRepository filesRepo;
+	@Autowired private FileFSRepository filesRepo;
 	@Autowired private FileContentStore contentStore;
 	
 	@RequestMapping(value="/files/{fileId}", method = RequestMethod.PUT)
-	public ResponseEntity<?> setContent(@PathVariable("fileId") Long id, @RequestParam("file") MultipartFile file) 
+	public ResponseEntity<?> setContent(@PathVariable("fileId") Long id, @RequestPart MultipartFile file)
 			throws IOException {
 
 		Optional<File> f = filesRepo.findById(id);

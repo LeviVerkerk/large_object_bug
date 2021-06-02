@@ -33,13 +33,17 @@
         </dependency>
         <dependency>
             <groupId>com.github.paulcwarren</groupId>
-            <artifactId>spring-content-commons</artifactId>
+            <artifactId>spring-content-jpa-boot-starter</artifactId>
             <version>${spring-content-version}</version>
         </dependency>
         <dependency>
             <groupId>com.github.paulcwarren</groupId>
             <artifactId>spring-content-rest</artifactId>
             <version>${spring-content-version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-hateoas</artifactId>
         </dependency>
         <dependency>
             <groupId>org.postgresql</groupId>

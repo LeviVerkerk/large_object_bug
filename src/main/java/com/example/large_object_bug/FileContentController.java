@@ -1,5 +1,6 @@
 package com.example.large_object_bug;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.HttpHeaders;
@@ -12,6 +13,7 @@ import java.io.IOException;
 import java.util.Optional;
 
 @RestController
+@Slf4j
 public class FileContentController {
 
 	@Autowired private FileRepository filesRepo;
@@ -45,6 +47,16 @@ public class FileContentController {
 			headers.setContentLength(f.get().getContentLength());
 			headers.set("Content-Type", f.get().getMimeType());
 			return new ResponseEntity<Object>(inputStreamResource, headers, HttpStatus.OK);
+		}
+		return null;
+	}
+
+	@RequestMapping(value = "/files/delete/{fileId}", method = RequestMethod.GET)
+	public ResponseEntity<?> deleteContent(@PathVariable("fileId") Long id) {
+		Optional<File> f = filesRepo.findById(id);
+		if (f.isPresent()) {
+			contentStore.unsetContent(f.get());
+			return new ResponseEntity<Object>("File deleted", HttpStatus.OK);
 		}
 		return null;
 	}

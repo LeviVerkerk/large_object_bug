@@ -16,6 +16,7 @@
     <properties>
         <java.version>11</java.version>
         <ginkgo-version>1.0.14</ginkgo-version>
+        <spring-content-version>1.2.5-SNAPSHOT</spring-content-version>
     </properties>
     <dependencies>
         <dependency>
@@ -27,17 +28,23 @@
             <artifactId>spring-boot-starter-data-jpa</artifactId>
         </dependency>
         <dependency>
-            <groupId>com.h2database</groupId>
-            <artifactId>h2</artifactId>
-        </dependency>
-        <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-data-rest</artifactId>
         </dependency>
         <dependency>
             <groupId>com.github.paulcwarren</groupId>
-            <artifactId>spring-content-fs-boot-starter</artifactId>
-            <version>1.2.4</version>
+            <artifactId>spring-content-commons</artifactId>
+            <version>${spring-content-version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.github.paulcwarren</groupId>
+            <artifactId>spring-content-rest</artifactId>
+            <version>${spring-content-version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.postgresql</groupId>
+            <artifactId>postgresql</artifactId>
+            <version>42.2.17</version>
         </dependency>
 
         <!-- Test dependencies -->

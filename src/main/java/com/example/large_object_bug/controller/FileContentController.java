@@ -1,6 +1,8 @@
-package com.example.large_object_bug;
+package com.example.large_object_bug.controller;
 
+import com.example.large_object_bug.model.File;
 import com.example.large_object_bug.repository.FileFSRepository;
+import com.example.large_object_bug.stores.FileContentStore;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.InputStreamResource;
@@ -40,6 +42,8 @@ public class FileContentController {
 
 	@RequestMapping(value="/files/{fileId}", method = RequestMethod.GET)
 	public ResponseEntity<?> getContent(@PathVariable("fileId") Long id) {
+
+		filesRepo.save(new File());
 
 		Optional<File> f = filesRepo.findById(id);
 		if (f.isPresent()) {

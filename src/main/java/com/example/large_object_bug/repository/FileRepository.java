@@ -8,10 +8,10 @@ import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 @RepositoryRestResource(path="files", collectionResourceRel="files")
 public interface FileRepository extends JpaRepository<File, Long> {
 
-    @Query("SELECT COUNT(*) FROM pg_largeobject WHERE loid IN " +
+    @Query(value = "SELECT COUNT(*) FROM pg_largeobject WHERE loid IN " +
             "( SELECT content FROM Blobs WHERE id IN " +
             "( SELECT content_id FROM File WHERE id = ?1))"
-    )
+    , nativeQuery = true)
     int findContent(long fileId);
 
 

@@ -70,7 +70,7 @@ class LargeObjectBugApplicationTests {
         f.ifPresent(file -> contentStore.unsetContent(file));
 
         //  Then
-        Assertions.assertFalse(filesRepo.findContent(f.get().getId()) == 0, "There are 0 records in the largeobject table");
+        Assertions.assertTrue(filesRepo.findContent(f.get().getId()) == 0, "There are 0 records in the largeobject table");
     }
 
 }

@@ -2,6 +2,7 @@ package com.example.large_object_bug;
 
 import ch.unibe.jexample.JExample;
 import com.example.large_object_bug.controller.FileContentController;
+import com.example.large_object_bug.model.File;
 import com.example.large_object_bug.repository.FileRepository;
 import com.example.large_object_bug.stores.FileContentStore;
 import org.junit.jupiter.api.Assertions;
@@ -12,23 +13,20 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.mock.web.MockMultipartFile;
-import org.springframework.test.context.TestPropertySource;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.transaction.TestTransaction;
 import org.springframework.test.web.servlet.MockMvc;
 
-import java.io.File;
+import java.io.IOException;
 import java.util.Date;
 import java.util.Optional;
 
-@RunWith(JExample.class)
-@SpringBootTest(classes = LargeObjectBugApplication.class)
+import javax.transaction.Transactional;
+
+@SpringBootTest( classes = LargeObjectBugApplication.class )
 @AutoConfigureMockMvc
-class LargeObjectBugApplicationTests {
-
-    @Autowired
-    private MockMvc mvc;
-
-    @Autowired
-    private FileContentController fileContentController;
+public class LargeObjectBugApplicationTests {
 
     @Value("${spring.content.fs.filesystem-root}")
     private String path;
@@ -40,43 +38,31 @@ class LargeObjectBugApplicationTests {
     private FileContentStore contentStore;
 
     @Test
-    void fileAdd() throws Exception {
+    void unsetContentLeavesPostgresBLOB() throws Exception {
+        // Given...
+        // ...the initial number of records Spring Content manages in its table
+        int initialCountSpringContentBlobs = filesRepo.countSpringContentBlobs();
+        // ... and the number of large objects postgres currently has
+        int initialCountPostgresLargeObjects = filesRepo.countLargeObjects();
 
-        //  Given
-        Assertions.assertEquals(0, filesRepo.countLargeObject(), "The large object array contains 0 elements");
+        // ... A File record stored
+        final File savedFile = filesRepo.save( new File(1L, "Test", new Date(), "Sum" ) );
+        // ... and associated to some binary content
+        MockMultipartFile file = new MockMultipartFile("data", "dummy.txt", "text/plain", "Some dataset...".getBytes());
+        contentStore.setContent(savedFile, file.getInputStream());
+        // save updated content-related info
+        filesRepo.save(savedFile);
+        Assertions.assertTrue(filesRepo.countSpringContentBlobs() > 0, "The file does not seem to have been stored in spring content blobs");
+        Assertions.assertTrue(filesRepo.countLargeObjects() > initialCountPostgresLargeObjects, "The file does not seem to have been stored as postgres LO");
 
-        MockMultipartFile file = new MockMultipartFile("data", "dummy.txt",
-                "text/plain", "Some dataset...".getBytes());
+        // When... the association is removed
+        contentStore.unsetContent(savedFile);
+        filesRepo.save( savedFile );
 
-        //  When
-        filesRepo.save(new com.example.large_object_bug.model.File("Test", new Date(), "Sum"));
-
-        Optional<com.example.large_object_bug.model.File> f = filesRepo.findById(1L);
-        System.out.println(f);
-        if (f.isPresent()) {
-            f.get().setMimeType(file.getContentType());
-
-            contentStore.setContent(f.get(), file.getInputStream());
-
-            // save updated content-related info
-            filesRepo.save(f.get());
-
-            //  Then
-            Assertions.assertTrue(filesRepo.countLargeObject() > 0, "There are more than 0 records in the largeobject table");
-        }
+        // Then
+        // ... SpringContent removes the row from the blobs table
+        Assertions.assertEquals( initialCountSpringContentBlobs, filesRepo.countSpringContentBlobs(), "The file does not seem to have been removed from spring content blobs" );
+        // ... and removes the binary data from postgres's large object store
+        Assertions.assertEquals( initialCountPostgresLargeObjects, filesRepo.countLargeObjects(), "The file does not seem to have been removed from postgres LO" );
     }
-
-    @Test
-    void fileRemove() throws InterruptedException {
-
-        //  Given
-        Optional<com.example.large_object_bug.model.File> f = filesRepo.findById(1L);
-
-        //  When
-        f.ifPresent(file -> contentStore.unsetContent(file));
-
-        //  Then
-        Assertions.assertEquals(0, filesRepo.countLargeObject(), "There are 0 records in the largeobject table");
-    }
-
 }

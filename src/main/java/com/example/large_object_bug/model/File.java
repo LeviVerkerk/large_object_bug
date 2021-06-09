@@ -14,7 +14,6 @@ import java.util.Date;
 public class File {
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
 	private long id;
 
 	private String name;
@@ -30,7 +29,8 @@ public class File {
 	@MimeType
 	private String mimeType = "text/plain";
 
-	public File(String name, Date created, String summary) {
+	public File(long id, String name, Date created, String summary) {
+		this.id = id;
 		this.name = name;
 		this.created = created;
 		this.summary = summary;

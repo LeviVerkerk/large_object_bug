@@ -42,9 +42,13 @@ class LargeObjectBugApplicationTests {
     @Test
     void fileAdd() throws Exception {
 
+        //  Given
+        Assertions.assertEquals(0, filesRepo.countLargeObject(), "The large object array contains 0 elements");
+
         MockMultipartFile file = new MockMultipartFile("data", "dummy.txt",
                 "text/plain", "Some dataset...".getBytes());
 
+        //  When
         filesRepo.save(new com.example.large_object_bug.model.File("Test", new Date(), "Sum"));
 
         Optional<com.example.large_object_bug.model.File> f = filesRepo.findById(1L);
@@ -57,20 +61,22 @@ class LargeObjectBugApplicationTests {
             // save updated content-related info
             filesRepo.save(f.get());
 
-            Assertions.assertTrue(filesRepo.findContent(f.get().getId()) > 0, "There are more than 0 records in the largeobject table");
+            //  Then
+            Assertions.assertTrue(filesRepo.countLargeObject() > 0, "There are more than 0 records in the largeobject table");
         }
     }
 
     @Test
     void fileRemove() throws InterruptedException {
 
-        Thread.sleep(1000);
-
+        //  Given
         Optional<com.example.large_object_bug.model.File> f = filesRepo.findById(1L);
+
+        //  When
         f.ifPresent(file -> contentStore.unsetContent(file));
 
         //  Then
-        Assertions.assertTrue(filesRepo.findContent(f.get().getId()) == 0, "There are 0 records in the largeobject table");
+        Assertions.assertEquals(0, filesRepo.countLargeObject(), "There are 0 records in the largeobject table");
     }
 
 }

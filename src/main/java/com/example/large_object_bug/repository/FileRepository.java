@@ -5,6 +5,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 
+import java.util.List;
+
 @RepositoryRestResource(path="files", collectionResourceRel="files")
 public interface FileRepository extends JpaRepository<File, Long> {
 
@@ -12,5 +14,12 @@ public interface FileRepository extends JpaRepository<File, Long> {
     , nativeQuery = true)
     int countLargeObject();
 
+    @Query(value = "SELECT lo_unlink(?1)"
+    , nativeQuery = true)
+    void unlinkObjectId(int id);
+
+    @Query(value = "SELECT id FROM blobs"
+    , nativeQuery = true)
+    List<Long> blobIds();
 
 }

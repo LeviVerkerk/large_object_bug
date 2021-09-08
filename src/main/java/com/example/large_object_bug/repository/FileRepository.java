@@ -17,5 +17,9 @@ public interface FileRepository extends JpaRepository<File, Long> {
     , nativeQuery = true)
     int countSpringContentBlobs();
 
+    @Query(value = "SELECT content from blobs where id=:id", nativeQuery = true)
+    long getBlobOid(String id);
 
+    @Query(value = "SELECT lo_unlink(:blobOid)", nativeQuery = true)
+    void unlinkLs( long blobOid );
 }

@@ -16,7 +16,7 @@
     <properties>
         <java.version>11</java.version>
         <ginkgo-version>1.0.14</ginkgo-version>
-        <spring-content-version>1.2.5-SNAPSHOT</spring-content-version>
+        <spring-content-version>1.2.0</spring-content-version>
     </properties>
     <dependencies>
         <dependency>
